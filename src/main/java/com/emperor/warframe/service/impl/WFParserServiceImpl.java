@@ -13,8 +13,12 @@ import com.emperor.warframe.service.WFParserService;
 public class WFParserServiceImpl implements WFParserService {
 
     public String parseWorldStateData(String rawJson) throws Exception {
+        File scriptDir = new File("scripts/parser-node");
+
         ProcessBuilder pb = new ProcessBuilder("node", "parse.js");
-        pb.directory(new File("parser-node"));
+        pb.directory(scriptDir);
+
+        pb.inheritIO();
 
         Process process = pb.start();
 
@@ -46,7 +50,6 @@ public class WFParserServiceImpl implements WFParserService {
             return result.substring(result.indexOf("{"));
         }
 
-        System.out.println(result);
         return result;
     }
 }
