@@ -24,4 +24,7 @@ async function getAndParse() {
   }
 }
 
-getAndParse();
+getAndParse().catch((err) => {
+  console.error("Fatal Crash:", err);
+  process.exit(1);
+});

@@ -12,24 +12,26 @@ import com.emperor.warframe.service.WFParserService;
 @Service
 public class WFParserServiceImpl implements WFParserService {
 
-    public String parseWorldStateData(String rawJson) throws Exception {
+    public String parseWorldStateData() throws Exception {
         File scriptDir = new File("scripts/parser-node");
 
         ProcessBuilder pb = new ProcessBuilder("node", "parse.js");
         pb.directory(scriptDir);
 
-        pb.inheritIO();
+        pb.redirectErrorStream(true);
 
         Process process = pb.start();
 
         StringBuilder output = new StringBuilder();
         StringBuilder errorOutput = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-                BufferedReader errReader = new BufferedReader(new InputStreamReader(process.getErrorStream(),
-                        StandardCharsets.UTF_8));) {
+        try (
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                BufferedReader errReader = new BufferedReader(
+                        new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
 
+        ) {
             String line;
             while ((line = reader.readLine()) != null)
                 output.append(line);
