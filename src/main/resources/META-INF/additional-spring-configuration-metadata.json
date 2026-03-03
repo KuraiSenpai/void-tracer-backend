@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "warframe.index.language",
+      "type": "java.lang.String",
+      "description": "Language for the index from the origin server"
+    },
+    {
+      "name": "warframe.index.url",
+      "type": "java.lang.String",
+      "description": "Url for language-specific index from the origin server"
+    },
+    {
+      "name": "warframe.index.file.name",
+      "type": "java.lang.String",
+      "description": "Name for the Warframe index file"
+    },
+    {
+      "name": "warframe.index.file.path",
+      "type": "java.lang.String",
+      "description": "Path where the index file will be stored"
+    },
+    {
+      "name": "warframe.profile.id",
+      "type": "java.lang.String",
+      "description": "Profile id for testing Warframe profile lookup"
+    },
+    {
+      "name": "warframe.profile.url",
+      "type": "java.lang.String",
+      "description": "Url for Warframe profile lookup"
+    },
+    {
+      "name": "warframe.dynamic.worldState",
+      "type": "java.lang.String",
+      "description": "Warframe's dynamic url for worldstate"
+    },
+    {
+      "name": "warframe.dynamic.alerts",
+      "type": "java.lang.String",
+      "description": "Warframe dynamic url for alerts"
+    },
+    {
+      "name": "warframe.public.export.plus.url",
+      "type": "java.lang.String",
+      "description": "A description for 'warframe.public.export.plus.url'"
+    }
+  ]
+}
