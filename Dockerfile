@@ -21,6 +21,10 @@ RUN apt-get update && apt-get install -y curl && \
 
 COPY --from=build /app/build/libs/warframe-0.0.1-SNAPSHOT.jar app.jar
 
+COPY package.json ./
+
+RUN npm install
+
 COPY scripts scripts
 
 ENV JAVA_TOOL_OPTIONS="-Xmx300M -Xms300M -XX:+UseSerialGC"
