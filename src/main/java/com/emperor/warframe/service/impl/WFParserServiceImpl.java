@@ -22,36 +22,42 @@ public class WFParserServiceImpl implements WFParserService {
 
         pb.inheritIO();
 
-        Process process = pb.start();
+        String result = "";
 
-        StringBuilder output = new StringBuilder();
-        StringBuilder errorOutput = new StringBuilder();
+        try {
+            Process process = pb.start();
+            StringBuilder output = new StringBuilder();
+            StringBuilder errorOutput = new StringBuilder();
 
-        try (
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-                BufferedReader errReader = new BufferedReader(
-                        new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
+            try (
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                    BufferedReader errReader = new BufferedReader(
+                            new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
 
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null)
-                output.append(line);
+            ) {
+                String line;
+                while ((line = reader.readLine()) != null)
+                    output.append(line);
 
-            while ((line = errReader.readLine()) != null)
-                errorOutput.append(line);
-        }
+                while ((line = errReader.readLine()) != null)
+                    errorOutput.append(line);
+            }
 
-        process.waitFor();
+            process.waitFor();
 
-        if (process.exitValue() != 0) {
-            throw new Exception("Node Parser Script Failed: " + errorOutput.toString());
-        }
+            if (process.exitValue() != 0) {
+                throw new Exception("Node Parser Script Failed: " + errorOutput.toString());
+            }
 
-        String result = output.toString();
-        // Cleanup to return the JSON part
-        if (result.contains("{")) {
-            return result.substring(result.indexOf("{"));
+            result = output.toString();
+            // Cleanup to return the JSON part
+            if (result.contains("{")) {
+                return result.substring(result.indexOf("{"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return result;
