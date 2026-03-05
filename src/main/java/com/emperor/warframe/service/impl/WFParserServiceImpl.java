@@ -20,6 +20,8 @@ public class WFParserServiceImpl implements WFParserService {
 
         pb.redirectErrorStream(true);
 
+        pb.inheritIO();
+
         Process process = pb.start();
 
         StringBuilder output = new StringBuilder();
