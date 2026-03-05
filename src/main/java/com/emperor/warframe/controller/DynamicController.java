@@ -14,7 +14,7 @@ import com.emperor.warframe.service.AlertsService;
 import com.emperor.warframe.service.WorldStateService;
 
 @RestController
-@RequestMapping("${apiPrefix}/dynamic")
+@RequestMapping("${api-prefix}/dynamic")
 public class DynamicController {
     @Deprecated
     @Autowired

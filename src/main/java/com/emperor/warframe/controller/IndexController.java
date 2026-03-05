@@ -9,7 +9,7 @@ import com.emperor.warframe.service.IndexService;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
-@RequestMapping("${apiPrefix}/index")
+@RequestMapping("${api-prefix}/index")
 public class IndexController {
     @Autowired
     IndexService indexService;

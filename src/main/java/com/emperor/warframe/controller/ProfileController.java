@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("${apiPrefix}/profile")
+@RequestMapping("${api-prefix}/profile")
 public class ProfileController {
     @Autowired
     private ProfileService profileService;

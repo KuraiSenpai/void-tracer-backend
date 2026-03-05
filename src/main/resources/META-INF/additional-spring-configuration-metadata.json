@@ -30,7 +30,7 @@
     "description": "Url for Warframe profile lookup"
   },
   {
-    "name": "warframe.dynamic.worldState",
+    "name": "warframe.dynamic.worldstate",
     "type": "java.lang.String",
     "description": "Warframe's dynamic url for worldstate"
   },
@@ -45,7 +45,7 @@
     "description": "A description for 'warframe.public.export.plus.url'"
   },
   {
-    "name": "apiPrefix",
+    "name": "api-prefix",
     "type": "java.lang.String",
     "description": "api prefix used by the Controllers"
   }

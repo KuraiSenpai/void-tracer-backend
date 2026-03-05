@@ -12,7 +12,7 @@ public class WFParserServiceImpl implements WFParserService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${warframe.dynamic.worldState}")
+    @Value("${warframe.dynamic.worldstate}")
     private String worldStateApiUrl;
 
     public String fetchWorldState() throws Exception {
