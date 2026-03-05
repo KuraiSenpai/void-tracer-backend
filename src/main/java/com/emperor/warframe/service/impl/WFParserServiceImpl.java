@@ -4,28 +4,27 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.time.Duration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.emperor.warframe.service.WFParserService;
 
 @Service
 public class WFParserServiceImpl implements WFParserService {
-    @Autowired
-    private RestTemplate restTemplate;
-
     @Value("${warframe.dynamic.worldState}")
     private String worldStateApiUrl;
+
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .build();
 
     public String parseWorldStateData() throws Exception {
         String rawData = fetchRawWorldState();
@@ -33,15 +32,29 @@ public class WFParserServiceImpl implements WFParserService {
         return executeNodeParser(rawData);
     }
 
-    private String fetchRawWorldState() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0");
-        headers.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
+    private String fetchRawWorldState() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(
+                        worldStateApiUrl))
+                .header("User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+                .header("Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+                .header("Accept-Language", "en-US,en;q=0.9")
+                .header("Sec-Fetch-Dest", "document")
+                .header("Sec-Fetch-Mode", "navigate")
+                .header("Sec-Fetch-Site", "none")
+                .header("Upgrade-Insecure-Requests", "1")
+                .GET()
+                .build();
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(worldStateApiUrl, HttpMethod.GET, entity, String.class);
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response.getBody();
+        if (response.statusCode() == 403) {
+            throw new RuntimeException("Official API blocked the Koyeb IP address. Anti-bot trigger.");
+        }
+
+        return response.body();
     }
 
     private String executeNodeParser(String inputData) throws Exception {
