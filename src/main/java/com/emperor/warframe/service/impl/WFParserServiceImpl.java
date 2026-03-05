@@ -5,8 +5,15 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,53 +24,58 @@ public class WFParserServiceImpl implements WFParserService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Value("${warframe.dynamic.worldState}")
+    private String worldStateApiUrl;
+
     public String parseWorldStateData() throws Exception {
-        String rawData = restTemplate.getForObject("https://api.warframe.com/cdn/worldState.php", String.class);
+        String rawData = fetchRawWorldState();
 
-        File scriptDir = new File("scripts/parser-node");
+        return executeNodeParser(rawData);
+    }
 
+    private String fetchRawWorldState() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0");
+        headers.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(worldStateApiUrl, HttpMethod.GET, entity, String.class);
+
+        return response.getBody();
+    }
+
+    private String executeNodeParser(String inputData) throws Exception {
         ProcessBuilder pb = new ProcessBuilder("node", "parse.js");
-        pb.directory(scriptDir);
-
+        pb.directory(new File("scripts/parser-node"));
         pb.redirectErrorStream(true);
 
-        try {
-            Process process = pb.start();
-            StringBuilder output = new StringBuilder();
+        Process process = pb.start();
 
-            try (OutputStream os = process.getOutputStream()) {
-                os.write(rawData.getBytes(StandardCharsets.UTF_8));
-                os.flush();
-            }
-
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println("NODE LOG: " + line);
-                    output.append(line);
-                }
-            }
-
-            int exitCode = process.waitFor();
-            System.out.println("Node process exited with code: " + exitCode);
-
-            if (exitCode != 0) {
-                throw new Exception("Node Parser Script Failed: " + output.toString());
-            }
-
-            String result = output.toString();
-            // Cleanup to return the JSON part
-            if (result.contains("{")) {
-                return result.substring(result.indexOf("{"));
-            }
-
-            return result;
-
-        } catch (Exception e) {
-            System.err.println("CRITICAL FAILURE in WFParserService: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
+        // Write to Node's stdin
+        try (OutputStream os = process.getOutputStream()) {
+            os.write(inputData.getBytes(StandardCharsets.UTF_8));
+            os.flush();
         }
+
+        // Read from Node's stdout
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+            }
+        }
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new RuntimeException("Node Parser Failed: " + output.toString());
+        }
+
+        return cleanJsonResponse(output.toString());
+    }
+
+    private String cleanJsonResponse(String raw) {
+        return raw.contains("{") ? raw.substring(raw.indexOf("{")) : raw;
     }
 }
