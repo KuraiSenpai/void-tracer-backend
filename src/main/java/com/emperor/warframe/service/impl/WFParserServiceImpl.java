@@ -8,10 +8,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,18 +28,7 @@ public class WFParserServiceImpl implements WFParserService {
     }
 
     private String fetchRawWorldState() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Warframe/2026.02.20.08.00 (Android; 14; Pixel 8 Pro)");
-        headers.set("X-Requested-With", "com.digitalextremes.warframemobile");
-        headers.set("Accept", "application/json");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                worldStateApiUrl,
-                HttpMethod.GET,
-                entity,
-                String.class);
-        return response.getBody();
+        return restTemplate.getForObject(worldStateApiUrl, String.class);
     }
 
     private String executeNodeParser(String inputData) throws Exception {
