@@ -20,8 +20,6 @@ public class WFParserServiceImpl implements WFParserService {
 
         pb.redirectErrorStream(true);
 
-        pb.inheritIO();
-
         String result = "";
 
         try {
@@ -37,11 +35,15 @@ public class WFParserServiceImpl implements WFParserService {
 
             ) {
                 String line;
-                while ((line = reader.readLine()) != null)
+                while ((line = reader.readLine()) != null) {
                     output.append(line);
+                }
 
-                while ((line = errReader.readLine()) != null)
+                while ((line = errReader.readLine()) != null) {
+                    System.out.println("NODE LOG: " + line);
                     errorOutput.append(line);
+                }
+
             }
 
             process.waitFor();
@@ -57,7 +59,9 @@ public class WFParserServiceImpl implements WFParserService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("CRITICAL FAILURE in WFParserService: " + e.getMessage());
+            e.printStackTrace(); // Ensures the full stack trace hits the logs
+            throw e;
         }
 
         return result;
