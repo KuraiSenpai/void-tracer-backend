@@ -23,7 +23,11 @@ COPY --from=build /app/build/libs/warframe-0.0.1-SNAPSHOT.jar app.jar
 
 COPY scripts/parser-node/package.json ./
 
+WORKDIR /app/scripts/parser-node
+
 RUN npm install
+
+WORKDIR /app
 
 COPY scripts scripts
 
