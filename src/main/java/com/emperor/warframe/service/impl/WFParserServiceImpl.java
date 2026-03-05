@@ -59,7 +59,7 @@ public class WFParserServiceImpl implements WFParserService {
             }
 
         } catch (Exception e) {
-            System.err.println("CRITICAL FAILURE in WFParserService: " + e.getMessage());
+            System.err.println("CRITICAL FAILURE in WFParserService: " + e.toString());
             e.printStackTrace(); // Ensures the full stack trace hits the logs
             throw e;
         }
