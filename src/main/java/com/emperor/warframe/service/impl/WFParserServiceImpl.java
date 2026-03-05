@@ -15,7 +15,15 @@ public class WFParserServiceImpl implements WFParserService {
     @Value("${warframe.dynamic.worldstate}")
     private String worldStateApiUrl;
 
+    private String cachedWorldState = "";
+
     public String fetchWorldState() throws Exception {
-        return restTemplate.getForObject(worldStateApiUrl, String.class);
+        String worldState = restTemplate.getForObject(worldStateApiUrl, String.class);
+
+        if (worldState != null && !worldState.isEmpty() && !worldState.equals(cachedWorldState)) {
+            this.cachedWorldState = worldState;
+        }
+
+        return cachedWorldState;
     }
 }

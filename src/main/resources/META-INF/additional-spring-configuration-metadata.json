@@ -48,5 +48,10 @@
     "name": "api-prefix",
     "type": "java.lang.String",
     "description": "api prefix used by the Controllers"
+  },
+  {
+    "name": "allowed-origins",
+    "type": "java.lang.String",
+    "description": "A description for 'allowed-origins'"
   }
 ]}
