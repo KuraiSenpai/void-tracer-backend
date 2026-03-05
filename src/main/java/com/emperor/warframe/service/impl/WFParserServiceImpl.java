@@ -4,14 +4,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,8 +32,18 @@ public class WFParserServiceImpl implements WFParserService {
     }
 
     private String fetchRawWorldState() {
-        runTruthTest();
-        return restTemplate.getForObject(worldStateApiUrl, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Warframe/2026.02.20.08.00 (Android; 14; Pixel 8 Pro)");
+        headers.set("X-Requested-With", "com.digitalextremes.warframemobile");
+        headers.set("Accept", "application/json");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                worldStateApiUrl,
+                HttpMethod.GET,
+                entity,
+                String.class);
+        return response.getBody();
     }
 
     private String executeNodeParser(String inputData) throws Exception {
@@ -69,36 +79,5 @@ public class WFParserServiceImpl implements WFParserService {
 
     private String cleanJsonResponse(String raw) {
         return raw.contains("{") ? raw.substring(raw.indexOf("{")) : raw;
-    }
-
-    private void runTruthTest() {
-        String url = "https://api.warframe.com/cdn/worldState.php";
-
-        // Test 1: Minimal Headers (Likely to fail)
-        int code1 = getResponseCode(url, "Java-HttpClient/11");
-
-        // Test 2: High-Fidelity Mobile Headers
-        int code2 = getResponseCode(url, "Warframe/1 CFNetwork/1410.0.3 Darwin/22.6.0");
-
-        System.out.println("Naked Request Result: " + code1);
-        System.out.println("Masked Request Result: " + code2);
-
-        if (code1 == 403 && code2 == 403) {
-            System.out.println("RESULT: Your IP (Koyeb) is hard-blocked. Headers won't save you.");
-        } else if (code1 == 403 && code2 == 200) {
-            System.out.println("RESULT: Headers worked! You bypassed the bot check.");
-        }
-    }
-
-    private int getResponseCode(String url, String ua) {
-        try {
-            var request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .header("User-Agent", ua)
-                    .GET().build();
-            return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).statusCode();
-        } catch (Exception e) {
-            return -1;
-        }
     }
 }
