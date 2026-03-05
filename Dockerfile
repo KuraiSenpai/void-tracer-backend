@@ -8,6 +8,8 @@ COPY settings.gradle .
 
 COPY src src
 
+RUN ./gradlew bootJar -x test
+
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
