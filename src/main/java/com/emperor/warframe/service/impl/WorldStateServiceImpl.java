@@ -13,6 +13,6 @@ public class WorldStateServiceImpl implements WorldStateService {
 
     @Override
     public String getWorldState() throws Exception {
-        return parserService.parseWorldStateData();
+        return parserService.fetchWorldState();
     }
 }

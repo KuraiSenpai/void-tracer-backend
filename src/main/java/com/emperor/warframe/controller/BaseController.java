@@ -14,10 +14,4 @@ public class BaseController {
     String getBase() {
         return MESSAGE;
     }
-
-    @GetMapping("/test-ip")
-    public String getMyIp() {
-        // This fetches your own outbound IP from a 3rd party service
-        return new RestTemplate().getForObject("https://api.ipify.org", String.class);
-    }
 }
