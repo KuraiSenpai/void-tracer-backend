@@ -20,50 +20,38 @@ public class WFParserServiceImpl implements WFParserService {
 
         pb.redirectErrorStream(true);
 
-        String result = "";
-
         try {
             Process process = pb.start();
             StringBuilder output = new StringBuilder();
-            StringBuilder errorOutput = new StringBuilder();
 
-            try (
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-                    BufferedReader errReader = new BufferedReader(
-                            new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
-
-            ) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));) {
                 String line;
                 while ((line = reader.readLine()) != null) {
+                    System.out.println("NODE LOG: " + line);
                     output.append(line);
                 }
-
-                while ((line = errReader.readLine()) != null) {
-                    System.out.println("NODE LOG: " + line);
-                    errorOutput.append(line);
-                }
-
             }
 
-            process.waitFor();
+            int exitCode = process.waitFor();
+            System.out.println("Node process exited with code: " + exitCode);
 
-            if (process.exitValue() != 0) {
-                throw new Exception("Node Parser Script Failed: " + errorOutput.toString());
+            if (exitCode != 0) {
+                throw new Exception("Node Parser Script Failed: " + output.toString());
             }
 
-            result = output.toString();
+            String result = output.toString();
             // Cleanup to return the JSON part
             if (result.contains("{")) {
                 return result.substring(result.indexOf("{"));
             }
 
+            return result;
+
         } catch (Exception e) {
-            System.err.println("CRITICAL FAILURE in WFParserService: " + e.toString());
+            System.err.println("CRITICAL FAILURE in WFParserService: " + e.getMessage());
             e.printStackTrace(); // Ensures the full stack trace hits the logs
             throw e;
         }
-
-        return result;
     }
 }
