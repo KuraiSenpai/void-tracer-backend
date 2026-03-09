@@ -21,7 +21,10 @@ import org.tukaani.xz.MemoryLimitException;
 import com.emperor.warframe.service.DownloadService;
 import com.emperor.warframe.service.IndexService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class IndexServiceImpl implements IndexService {
     private static final Logger logger = LoggerFactory.getLogger(IndexServiceImpl.class);
 
@@ -54,10 +57,10 @@ public class IndexServiceImpl implements IndexService {
         try {
             decompressLZMA(inputFile, outputFile);
         } catch (MemoryLimitException e) {
-            logger.error("Failed: System ran out of memory during decompression.", e);
+            log.error("Failed: System ran out of memory during decompression.", e);
             return false;
         } catch (Exception e) {
-            logger.error("Failed:", e);
+            log.error("Failed:", e);
             return false;
         }
         return true;

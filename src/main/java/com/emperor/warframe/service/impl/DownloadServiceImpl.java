@@ -13,9 +13,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.emperor.warframe.service.DownloadService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DownloadServiceImpl implements DownloadService {
-    private static final Logger logger = LoggerFactory.getLogger(DownloadServiceImpl.class);
     @Autowired
     private RestTemplate restTemplate;
 
@@ -27,7 +29,7 @@ public class DownloadServiceImpl implements DownloadService {
 
     private boolean saveToResources(byte[] indexBytes, String fileName, String downloadPath) {
         if (indexBytes == null || indexBytes.length == 0) {
-            logger.error("Failed to save file '{}': Byte array is empty or null.", fileName);
+            log.error("Failed to save file '{}': Byte array is empty or null.", fileName);
             return false;
         }
 
@@ -38,9 +40,9 @@ public class DownloadServiceImpl implements DownloadService {
 
             Files.write(indexPath, indexBytes);
 
-            logger.info("Successfully saved file to resources: {}", indexPath.toAbsolutePath());
+            log.info("Successfully saved file to resources: {}", indexPath.toAbsolutePath());
         } catch (IOException e) {
-            logger.error("IOException occurred while saving file '{}' to disk: {}", fileName, e.getMessage());
+            log.error("IOException occurred while saving file '{}' to disk: {}", fileName, e.getMessage());
         }
         return true;
     }
