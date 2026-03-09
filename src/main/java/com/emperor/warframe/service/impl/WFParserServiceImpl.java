@@ -20,8 +20,10 @@ public class WFParserServiceImpl implements WFParserService {
     public String fetchWorldState() throws Exception {
         String worldState = restTemplate.getForObject(worldStateApiUrl, String.class);
 
-        if (worldState != null && !worldState.isEmpty() && !worldState.equals(cachedWorldState)) {
-            this.cachedWorldState = worldState;
+        if (worldState != null) {
+            if (!worldState.isEmpty() && !worldState.equals(cachedWorldState)) {
+                this.cachedWorldState = worldState;
+            }
         }
 
         return cachedWorldState;
