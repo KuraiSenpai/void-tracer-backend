@@ -4,14 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class IndexServiceImpl implements IndexService {
-    private static final Logger logger = LoggerFactory.getLogger(IndexServiceImpl.class);
-
     @Value("${warframe.index.url}")
     private String warframeIndexUrl;
 
