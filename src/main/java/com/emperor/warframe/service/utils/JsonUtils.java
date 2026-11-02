@@ -1,19 +1,21 @@
 package com.emperor.warframe.service.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class JsonUtils {
     private static ObjectMapper objectMapper;
 
-    @Autowired
-    private ObjectMapper managedObjectMapper;
+    private final ObjectMapper managedObjectMapper;
+
+    JsonUtils(ObjectMapper managedObjectMapper) {
+        this.managedObjectMapper = managedObjectMapper;
+    }
 
     @PostConstruct
     private void init() {

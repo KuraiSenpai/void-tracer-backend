@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.tukaani.xz.LZMAInputStream;
@@ -33,8 +32,11 @@ public class IndexServiceImpl implements IndexService {
     @Value("${warframe.index.file.path}")
     private String warframeIndexFilePath;
 
-    @Autowired
-    DownloadService downloadService;
+    final DownloadService downloadService;
+
+    IndexServiceImpl(DownloadService downloadService) {
+        this.downloadService = downloadService;
+    }
 
     @Override
     public boolean getIndex() {

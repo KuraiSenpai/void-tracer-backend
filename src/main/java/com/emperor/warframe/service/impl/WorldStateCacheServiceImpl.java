@@ -22,7 +22,7 @@ public class WorldStateCacheServiceImpl implements WorldStateCacheService {
 
     public String getJsonData() {
         return repo.findById(SINGLE_ID)
-                .map(WorldStateCache::getJsonData)
+                .map(cache -> cache.getJsonData())
                 .orElse("");
     }
 

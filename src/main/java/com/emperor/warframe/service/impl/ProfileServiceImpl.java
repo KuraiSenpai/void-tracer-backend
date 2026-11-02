@@ -1,6 +1,5 @@
 package com.emperor.warframe.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,8 +12,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Value("${warframe.profile.url}")
     private String warframeProfileUrl;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    ProfileServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public String getProfile(String accountId) {

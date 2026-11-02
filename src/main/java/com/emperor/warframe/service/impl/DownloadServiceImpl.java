@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class DownloadServiceImpl implements DownloadService {
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    DownloadServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public boolean downloadIndex(String indexUrl, String warframeIndexFileName, String warframeIndexDownloadPath) {
