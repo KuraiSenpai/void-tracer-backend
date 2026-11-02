@@ -14,7 +14,7 @@ RUN ./gradlew bootJar -x test
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-COPY --from=build /app/build/libs/warframe-1.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/build/libs/warframe-1.0.jar app.jar
 
 ENV JAVA_TOOL_OPTIONS="-Xmx300M -Xms300M -XX:+UseSerialGC"
 EXPOSE 8080
