@@ -7,14 +7,16 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+import com.emperor.warframe.dto.AcrithisItemDto;
 import com.emperor.warframe.dto.AcrithisRotationDto;
+import com.emperor.warframe.service.utils.AcrithisCostRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class AcrithisMapper {
-    private static final String VALUE_START_NAME = "AcrithisObserved";
-    private static final String ITEM_NAME = "AcrithisItem";
+    private static final String ACRITHIS_START_NAME = "AcrithisObserved";
+    private static final String ACRITHIS_ITEM_NAME = "AcrithisItem";
     private static final int ITEM_COUNT = 5;
 
     private final ObjectMapper objectMapper;
@@ -34,13 +36,14 @@ public class AcrithisMapper {
                 .path("*")
                 .asText();
 
-        String observedDate = extractValue(wikitext, VALUE_START_NAME);
-        List<String> items = new ArrayList<>();
+        String observedDate = extractValue(wikitext, ACRITHIS_START_NAME);
+        List<AcrithisItemDto> items = new ArrayList<>();
 
         for (int i = 1; i <= ITEM_COUNT; i++) {
-            String item = extractValue(wikitext, ITEM_NAME + i);
-            if (item != null) {
-                items.add(item);
+            String itemName = extractValue(wikitext, ACRITHIS_ITEM_NAME + i);
+            if (itemName != null) {
+                int cost = AcrithisCostRegistry.getCost(itemName);
+                items.add(new AcrithisItemDto(itemName, cost));
             }
         }
 
