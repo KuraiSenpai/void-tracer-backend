@@ -41,13 +41,22 @@ public class AcrithisMapper {
 
         for (int i = 1; i <= ITEM_COUNT; i++) {
             String itemName = extractValue(wikitext, ACRITHIS_ITEM_NAME + i);
-            if (itemName != null) {
+            if (itemName != null && !itemName.isBlank()) {
                 int cost = AcrithisCostRegistry.getCost(itemName);
-                items.add(new AcrithisItemDto(itemName, cost));
+
+                String normalizedItemName = normalizeItemName(itemName);
+                items.add(new AcrithisItemDto(normalizedItemName, cost));
             }
         }
 
         return new AcrithisRotationDto(observedDate, items);
+    }
+
+    private String normalizeItemName(String itemName) {
+        if (itemName.equals("Forma")) {
+            return "Forma Blueprint";
+        }
+        return itemName;
     }
 
     private String extractValue(String text, String variableName) {

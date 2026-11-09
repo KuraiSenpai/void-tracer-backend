@@ -32,6 +32,9 @@ public class AcrithisCostRegistry {
     }
 
     public static int getCost(String itemName) {
+        if (itemName == null) {
+            return 20;
+        }
         return ITEM_COSTS.getOrDefault(itemName, 20);
     }
 }
