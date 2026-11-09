@@ -42,9 +42,10 @@ public class AcrithisMapper {
         for (int i = 1; i <= ITEM_COUNT; i++) {
             String itemName = extractValue(wikitext, ACRITHIS_ITEM_NAME + i);
             if (itemName != null && !itemName.isBlank()) {
-                int cost = AcrithisCostRegistry.getCost(itemName);
-
                 String normalizedItemName = normalizeItemName(itemName);
+                
+                int cost = AcrithisCostRegistry.getCost(normalizedItemName);
+
                 items.add(new AcrithisItemDto(normalizedItemName, cost));
             }
         }
